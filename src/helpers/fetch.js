@@ -208,6 +208,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 constant.TEXT_EMPTY,
                 constant.TEXT_EMPTY,
                 constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
                 constant.TEXT_EMPTY
             ]);
         } else if (output.task === constant.USER_INFO_SCREEN) {
