@@ -1,0 +1,220 @@
+/* Instructions */
+.body {
+  background-color: white;
+}
+.instr-title {
+  font-size: 30pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+.attr-td {
+  text-align: left;
+  font-size: 1.3em;
+}
+
+/* INdex */
+.section-sm {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-height: 500px;
+    /* padding-top: 1rem; */
+    padding-bottom: 2rem;
+}
+
+
+.fade-loader {
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+    position: fixed;
+    top: 35%;
+    left: 48%;
+}
+
+.sync-loader {
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+    position: fixed;
+    top: 5%;
+    right: 5%;
+}
+
+.pagination {
+    text-align: end;
+    margin-right: 5em
+}
+
+.instr {
+    margin-bottom: 20px;
+  }
+
+/* FONTS */
+.instr-h1 {
+    font-size: 2.3em;
+    text-align: justify;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.instr-h2 {
+    font-size: 1.8em;
+    text-align: justify;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.instr-h3 {
+    font-size: 1.37em;
+    text-align: justify;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.instr-h4 {
+    font-size: 1.3em;
+    text-align: justify;
+    margin-top: 1.33em;
+    margin-bottom: 1.33em;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.instr-h5 {
+    font-size: 1.13em;
+    text-align: justify;
+    margin-top: 1.67em;
+    margin-bottom: 1.67em;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.instr-h6 {
+    font-size: .97em;
+    text-align: justify;
+    margin-top: 2.33em;
+    margin-bottom: 2.33em;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* USERFORM */
+form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* VIsual pattern */
+.pressSpace {
+    position: fixed;
+    top: 40%;
+    left: 45%;
+    text-align: center;
+    transform: translate(-40%, -40%)
+}
+
+/* Auction task */
+
+.container-xxl {
+    max-width: 1350px;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px; 
+    margin-right: auto; 
+    margin-left: auto;
+}
+
+.strikethrough {
+  position: relative;
+  font-size: 100pt;
+  font-weight: bold;
+  color: #0074D9;
+  font-family: sans-serif;
+}
+
+.title {
+  display: inline-block;
+  font-size: 27pt;
+  font-weight: bold;
+}
+
+.img-container{
+  display: contents;/*flex;*/ 
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.img-left {
+  height: 140px;
+  padding-left: 1em;
+  padding-right: 0.5em
+}
+
+.img-middle {
+  height: 140px;
+  padding-left: 0.5em;
+  padding-right: 0.5em
+}
+
+.img-right {
+  height: 140px;
+  padding-left: 0.5em;
+  padding-right: 1em
+}
+
+.modal-body{
+  padding: 4em;
+  text-align: center;
+}
+
+.modal-text {
+  font-size: 18pt;
+  line-height: 1.3;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.hotel-name {
+  font-size: 30pt;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.hotel-description {
+  font-size: 16pt;
+  line-height: 1.3;
+  margin-bottom: 25px;
+  text-align: justify;
+}
+
+.auction-bid {
+  position: relative;
+  font-size: 100pt;
+  font-weight: bold;
+  color: #0074D9;
+  font-family: sans-serif;
+}
+
+.strikethrough:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 40%;
+  right: 0;
+  border-top: 10px solid ;
+  border-color: black;
+
+  -webkit-transform:rotate(-20deg);
+  -moz-transform:rotate(-20deg);
+  -ms-transform:rotate(-20deg);
+  -o-transform:rotate(-20deg);
+  transform:rotate(-20deg);
+}
