@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as constant from '../helpers/constants';
 
-const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2/'; //'http://localhost:5000/'
+const _apiHost = 'https://api.swps-pjatk-experiment.pl/v1/';
 const fetch_versions_url = 'versions'
 const fetch_apptext_url = 'apptext'
 const fetch_inituserdata_url = 'inituserdata'
