@@ -7,19 +7,7 @@ export const RED = "red";
 export const TEXT_EMPTY = "";
 
 //General config parameters
-export const PARTICIPANTS_PER_SEX_PER_GROUP_LIMIT = 60;
 export const YEARS_EDUCATION_LIMIT = 11;
-export const PARTICIPANTS_PER_SCENARIO_PER_GROUP_LIMIT = 60;
-export const SCENARIOS = ["hotels", "hotels-rev"]
-export const PARTICIPANTS_GROUPS = [
-    { minAge: 19, maxAge: 30 },
-    { minAge: 42, maxAge: 53 },
-    { minAge: 65, maxAge: 76 }
-]
-//Scenarios
-export const SCENARIO_HOTEL_REV = "hotels-rev"
-export const SCENARIO_HOTEL_NORMAL = "hotels"
-export const SCENARIO_HOTEL_TUTORIAL = "hotels-tutorial"
 
 //Visual Pattern
 export const VISUAL_PATTERN = "VisualPattern"

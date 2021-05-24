@@ -312,7 +312,7 @@ class Index extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("SaveUserVisualPattern");
-            
+
             //redirect to ARIADNA
             window.location.replace(ARIADNA_REDIRECT_FINISHED)
         } else {
@@ -466,20 +466,8 @@ class Index extends Component {
     validateForm() {
         const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc } = outputFormData;
-        const groups = constant.PARTICIPANTS_GROUPS
-        const firstGroupAgeLimit = groups[0]
-        const secondGroupAgeLimit = groups[1]
-        const thirdGroupAgeLimit = groups[2]
 
-        const participantsLimit = constant.PARTICIPANTS_PER_SEX_PER_GROUP_LIMIT
         const yearsEducLimit = constant.YEARS_EDUCATION_LIMIT
-
-        const femaleParticipants = inputParticipants[0];
-        const maleParticipants = inputParticipants[1];
-
-        const indexFirstGroup = 0
-        const indexSecondGroup = 1
-        const indexThirdGroup = 2
 
         if (DEBUG) console.log("validateForm")
         if (DEBUG) console.log(outputFormData)
@@ -488,26 +476,7 @@ class Index extends Component {
             redirect: false
         }
 
-        let amountParticipant = 0;
-        let ageIncorrectIntervalFlag = false;
-
-        // CONTROL OF AMOUNT OF PARTICIPANTS
-        if (age >= parseInt(firstGroupAgeLimit.minAge) &&
-            age <= parseInt(firstGroupAgeLimit.maxAge)) { //firstGroup
-            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants[indexFirstGroup] : maleParticipants[indexFirstGroup];
-        } else if (age >= parseInt(secondGroupAgeLimit.minAge) &&
-            age <= parseInt(secondGroupAgeLimit.maxAge)) { //secondGroup
-            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants[indexSecondGroup] : maleParticipants[indexSecondGroup];
-        } else if (age >= parseInt(thirdGroupAgeLimit.minAge) &&
-            age <= parseInt(thirdGroupAgeLimit.maxAge)) { //thirdGroup
-            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants[indexThirdGroup] : maleParticipants[indexThirdGroup];
-        } else {
-            ageIncorrectIntervalFlag = true;
-        }
-
-
-        if (ageIncorrectIntervalFlag || parseInt(amountParticipant) >= participantsLimit ||
-            levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {
+        if (levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {
             data.redirect = true;
         }
 
@@ -751,7 +720,7 @@ class Index extends Component {
                         loading={loadingSyncData}
                     />
                 </div>
-                { isFooterShownInCurrentScreen(this.state)}
+                {isFooterShownInCurrentScreen(this.state)}
             </main>
         )
     }
@@ -787,9 +756,7 @@ function isFooterShownInCurrentScreen(state) {
  */
 function changePages(state, context) {
 
-    const { currentScreenNumber,
-        inputNavigation,
-        inputTextInstructions} = state;
+    const { currentScreenNumber, inputNavigation, inputTextInstructions } = state;
     const totalLength = inputNavigation.length;
 
     if (totalLength > 0) { //If input navigation has been called
