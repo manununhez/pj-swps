@@ -18,23 +18,28 @@ import {
 } from 'reactstrap';
 
 class NavbarCustom extends React.Component {
+  constructor(props) {
+    super(props);
 
-  state = {
-    isOpen: false
-  };
+    this.state = {
+      isOpen: false
+    };
 
-  toogle = () => {
-    this.setState(({ isOpen }) => ({
-      isOpen: !isOpen
-    }));
-  };
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  }
 
   render() {
     return (<div>
       <Navbar color="light" light expand="md">
         <NavbarBrand href="/">Memory task</NavbarBrand>
         <NavbarToggler onClick={this.toggle} />
-        <Collapse isOpen={this.isOpen} navbar>
+        <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="mr-auto" navbar>
             {getDropdownMenuItems(this.props.version)}
             <NavItem>
