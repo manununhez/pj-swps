@@ -12,7 +12,9 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  NavbarText
+  NavbarText,
+  NavItem,
+  NavLink
 } from 'reactstrap';
 
 class NavbarCustom extends React.Component {
@@ -34,14 +36,10 @@ class NavbarCustom extends React.Component {
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.isOpen} navbar>
           <Nav className="mr-auto" navbar>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Versions
-              </DropdownToggle>
-              <DropdownMenu right>
-                {getDropdownMenuItems(this.props.version)}
-              </DropdownMenu>
-            </UncontrolledDropdown>
+            {getDropdownMenuItems(this.props.version)}
+            <NavItem>
+              <NavLink href="/memo-task-results">Results</NavLink>
+            </NavItem>
           </Nav>
           <NavbarText>v1.0</NavbarText>
         </Collapse>
@@ -52,6 +50,8 @@ class NavbarCustom extends React.Component {
 }
 
 function getDropdownMenuItems(items) {
+  if (items === null || items === undefined) return <></>
+
   var children = items.map(function (item) {
     return <DropdownItem to={{
       pathname: '/version/' + item.version,
@@ -63,7 +63,15 @@ function getDropdownMenuItems(items) {
     </DropdownItem>
   });
 
-  return (children);
+  return (
+    <UncontrolledDropdown nav inNavbar>
+      <DropdownToggle nav caret>
+        Versions
+      </DropdownToggle>
+      <DropdownMenu right>
+        {children}
+      </DropdownMenu>
+    </UncontrolledDropdown>);
 }
 
 export default NavbarCustom;
