@@ -5,6 +5,8 @@ import { FormGroup, Form, Input, Container, Col, Label, Alert } from "reactstrap
 
 import NumberFormat from 'react-number-format';
 
+import Footer from "../Footers/Footer";
+
 import * as constant from '../../helpers/constants';
 
 import "./style.css";
@@ -41,34 +43,38 @@ class UserForm extends React.Component {
 
   handleKeyDownEvent = (event) => {
     if (event.keyCode === constant.ENTER_KEY_CODE) { //Transition between screens
-      const { formData } = this.state
-      let error = {
-        showError: false,
-        textError: constant.TEXT_EMPTY
-      }
-      // CONTROL OF EMPTY_TEXT
-      if (formData.age === 0) {
-        error.textError = constant.ERROR_5;
-        error.showError = true;
-      } else if (formData.profession === constant.TEXT_EMPTY) {
-        error.textError = constant.ERROR_7;
-        error.showError = true;
-      } else if (formData.levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
-        error.textError = constant.ERROR_11;
-        error.showError = true;
-      } else if (formData.yearsEduc === 0) {
-        error.textError = constant.ERROR_6;
-        error.showError = true;
-      } else if (formData.sex === constant.TEXT_EMPTY) {
-        error.textError = constant.ERROR_14;
-        error.showError = true;
-      }
+      this.goToNextScreen()
+    }
+  }
 
-      if (error.showError) {
-        this.setState({ error: error })
-      } else {
-        this.props.action(this.state.formData)
-      }
+  goToNextScreen = () => {
+    const { formData } = this.state
+    let error = {
+      showError: false,
+      textError: constant.TEXT_EMPTY
+    }
+    // CONTROL OF EMPTY_TEXT
+    if (formData.age === 0) {
+      error.textError = constant.ERROR_5;
+      error.showError = true;
+    } else if (formData.profession === constant.TEXT_EMPTY) {
+      error.textError = constant.ERROR_7;
+      error.showError = true;
+    } else if (formData.levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
+      error.textError = constant.ERROR_11;
+      error.showError = true;
+    } else if (formData.yearsEduc === 0) {
+      error.textError = constant.ERROR_6;
+      error.showError = true;
+    } else if (formData.sex === constant.TEXT_EMPTY) {
+      error.textError = constant.ERROR_14;
+      error.showError = true;
+    }
+
+    if (error.showError) {
+      this.setState({ error: error })
+    } else {
+      this.props.action(this.state.formData)
     }
   }
 
@@ -123,6 +129,10 @@ class UserForm extends React.Component {
   validateNumberFormat = (id, numberFormat) => {
     let e = { target: { id: id, value: numberFormat.formattedValue } }
     this.validateInputForm(e)
+  }
+
+  onClickFooter = () => {
+    this.goToNextScreen()
   }
 
   render() {
@@ -213,6 +223,7 @@ class UserForm extends React.Component {
             </div>
           </FormGroup>
         </Form>
+        <Footer action={this.onClickFooter} text={constant.TEXT_FOOTER_ENTER} />
       </Container>
     );
   }

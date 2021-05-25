@@ -2,7 +2,7 @@ import React from "react";
 
 // reactstrap components
 import {
-  Alert,
+  Button,
   Container
 } from "reactstrap";
 
@@ -12,9 +12,7 @@ class SimpleFooter extends React.Component {
   render() {
     return (
       <Container>
-        <Alert className="footer" color="success">
-          {this.props.text}
-        </Alert>
+        <Button className="footer" color="success" size="lg" block onClick={this.props.action.bind(this)}>{this.props.text}</Button>
       </Container>
     );
   }

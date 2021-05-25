@@ -6,13 +6,39 @@ import "./style.css";
 
 import * as constant from '../../helpers/constants';
 
+import Footer from "../Footers/Footer";
+
 class Instruction extends React.Component {
+    componentDidMount() {
+        //for keyboard detection
+        document.addEventListener(constant.EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener(constant.EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
+    }
+
+    handleKeyDownEvent = (event) => {
+        if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
+            this.goToNextScreen()
+        }
+    }
+
+    goToNextScreen = () => {
+        this.props.action()
+    }
+
+    onClickFooter = () => {
+        this.goToNextScreen()
+    }
+
     render() {
         return (
             <Container fluid="md">
-                <Row className="justify-content-md-center">
+                <Row className="section-sm justify-content-md-center">
                     <HtmlFormattedText text={this.props.text} screen={this.props.name} />
                 </Row>
+                {this.props.name.includes("Final") ? <></> : <Footer action={this.onClickFooter} text={constant.TEXT_FOOTER} />}
             </Container>
         )
     };

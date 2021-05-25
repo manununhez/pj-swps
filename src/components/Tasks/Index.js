@@ -13,7 +13,6 @@ import FadeLoader from "react-spinners/FadeLoader";
 import SyncLoader from "react-spinners/SyncLoader";
 
 // Views
-import Footer from "../Footers/Footer";
 import Instruction from "./Instruction"
 import UserForm from "./UserForm";
 import VisualPatternTask from "./VisualPatternTask";
@@ -23,7 +22,7 @@ import "./style.css"
 // helpers
 import * as request from '../../helpers/fetch';
 import * as constant from '../../helpers/constants';
-import { USER_INFO, randomNumber } from '../../helpers/utils';
+import { USER_INFO } from '../../helpers/utils';
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 const ARIADNA_REDIRECT_QUOTA_FULL = process.env.REACT_APP_ARIADNA_REDIRECT_QUOTA_FULL;
@@ -357,6 +356,9 @@ class Index extends Component {
      * COMPONENTS HANDLER
      ********************/
 
+    instructionHandler = () => {
+        this._validatePressedSpaceKeyToNextPage()
+    }
     /**
      * Manage results comming from User Form Data
      * UserForm component (UserForm.js)
@@ -464,8 +466,8 @@ class Index extends Component {
     * Validate user form results
     */
     validateForm() {
-        const { outputFormData, inputParticipants } = this.state
-        const { sex, age, yearsEduc, levelEduc } = outputFormData;
+        const { outputFormData } = this.state
+        const { yearsEduc, levelEduc } = outputFormData;
 
         const yearsEducLimit = constant.YEARS_EDUCATION_LIMIT
 
@@ -633,11 +635,11 @@ class Index extends Component {
      * Manage keyboard user interactions
      * @param {*} event 
      */
-    handleKeyDownEvent = (event) => {
-        if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
-            this._validatePressedSpaceKeyToNextPage()
-        }
-    }
+    // handleKeyDownEvent = (event) => {
+    //     if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
+    //         this._validatePressedSpaceKeyToNextPage()
+    //     }
+    // }
 
     /**
      * Manage the state when the browser window is closing
@@ -720,33 +722,10 @@ class Index extends Component {
                         loading={loadingSyncData}
                     />
                 </div>
-                {isFooterShownInCurrentScreen(this.state)}
+                {/* {isFooterShownInCurrentScreen(this.state)} */}
             </main>
         )
     }
-}
-
-function isFooterShownInCurrentScreen(state) {
-    const { currentScreenNumber, inputNavigation } = state;
-    if (inputNavigation.length === 0) return; //data was not loaded yet
-
-    const { screen, type } = inputNavigation[currentScreenNumber];
-    let isFooterShown = false
-    let footerText = constant.TEXT_FOOTER
-
-    if (type === constant.INSTRUCTION_SCREEN) {
-        if (screen.includes(constant.VISUAL_PATTERN)) {
-            isFooterShown = true;
-        }
-    } else if (screen === constant.USER_FORM_SCREEN) {
-        isFooterShown = true;
-    }
-
-    if (screen === constant.USER_FORM_SCREEN) {
-        footerText = constant.TEXT_FOOTER_ENTER
-    }
-
-    return ((isFooterShown) ? <Footer text={footerText} /> : <></>)
 }
 
 /**
@@ -769,6 +748,7 @@ function changePages(state, context) {
                 return <Instruction
                     text={inputTextInstructions}
                     name={screen}
+                    action={context.instructionHandler}
                 />;
             } else if (screen === constant.USER_FORM_SCREEN) {
                 return <UserForm

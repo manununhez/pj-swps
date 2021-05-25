@@ -28,6 +28,8 @@ import {
     VISUAL_PATTERN_RESULTS_PRESS_SPACE
 } from '../../helpers/constants';
 
+import Footer from "../Footers/Footer";
+
 import { randomNumber } from '../../helpers/utils';
 
 import './style.css'
@@ -62,10 +64,6 @@ class VisualPatternTask extends React.Component {
             startPressSpace: VISUAL_PATTERN_TEXT_START_PRESS_SPACE,
             textInstruction: VISUAL_PATTERN_INSTRUCTION,
         };
-
-        this.handleClick = this._handleClick.bind(this);
-        this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
-
     }
 
     componentDidMount() {
@@ -153,23 +151,27 @@ class VisualPatternTask extends React.Component {
         });
     }
 
-    _handleKeyDownEvent(event) {
+    handleKeyDownEvent = (event) => {
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
-            const { matrixResult, showInitMessage, isLevelFinished, showCompletedTable, showResults, seconds } = this.state
-            const isResultsShown = !showCompletedTable && !showInitMessage && showResults && isLevelFinished
+            this.goToNextScreen()
+        }
+    }
 
-            if (isResultsShown) { //the user is checking results and press space to show the message to start the game
-                this._saveResults()
-            } else if (showInitMessage) { //the user press space to start the game. The game starts!
-                this.setState(({ showInitMessage }) => ({
-                    showInitMessage: !showInitMessage
-                }), () => {
-                    this._initConfig();
-                })
-            } else if (matrixResult.includes(TILE_SUCCESS) && seconds === 0) { //the level game finished, the user press space to check results. Seconds == 0 to avoid press space before toe counter finishes. matrixResult.includes(TILE_SUCCESS) means that at least one tile was selected
-                // go to check Results
-                this._checkResults()
-            }
+    goToNextScreen = () => {
+        const { matrixResult, showInitMessage, isLevelFinished, showCompletedTable, showResults, seconds } = this.state
+        const isResultsShown = !showCompletedTable && !showInitMessage && showResults && isLevelFinished
+
+        if (isResultsShown) { //the user is checking results and press space to show the message to start the game
+            this._saveResults()
+        } else if (showInitMessage) { //the user press space to start the game. The game starts!
+            this.setState(({ showInitMessage }) => ({
+                showInitMessage: !showInitMessage
+            }), () => {
+                this._initConfig();
+            })
+        } else if (matrixResult.includes(TILE_SUCCESS) && seconds === 0) { //the level game finished, the user press space to check results. Seconds == 0 to avoid press space before toe counter finishes. matrixResult.includes(TILE_SUCCESS) means that at least one tile was selected
+            // go to check Results
+            this._checkResults()
         }
     }
 
@@ -265,7 +267,7 @@ class VisualPatternTask extends React.Component {
     }
 
 
-    _handleClick(index) {
+    handleClickTask = (index) => {
         const { matrixResult, isLevelFinished } = this.state;
 
         if (!isLevelFinished) { //to avoid double click in a tile already selected
@@ -279,16 +281,19 @@ class VisualPatternTask extends React.Component {
         }
     }
 
+    onClickFooter = () => {
+        this.goToNextScreen()
+    }
+
     render() {
         const { showInitMessage, resultsPressSpace, resultsFailed, resultsCorrect, startPressSpace, textInstruction } = this.state;
 
         return (
             <>
                 {showInitMessage ?
-                    <h2 className="pressSpace">{resultsPressSpace}</h2> :
-                    displayTable(this.state, this.handleClick, resultsPressSpace,
-                        resultsFailed, resultsCorrect,
-                        startPressSpace, textInstruction)}
+                    <div style={{ position: "fixed", top: "40%", left: "45%", textAlign: "center", transform: "translate(-40%, -40%)" }}>
+                        <Footer action={this.onClickFooter} text={resultsPressSpace} /></div> :
+                    displayTable(this.state, this.handleClickTask, resultsPressSpace, resultsFailed, resultsCorrect, startPressSpace, textInstruction, this.onClickFooter)}
             </>
         );
     }
@@ -297,10 +302,10 @@ class VisualPatternTask extends React.Component {
 /**
  * 
  * @param {*} state 
- * @param {*} handleClick 
+ * @param {*} handleClickTask 
  */
-function displayTable(state, handleClick, pressSpaceMessage, resultFailedMessage,
-    resultSuccessMessage, startPressSpaceMessage, textMessage) {
+function displayTable(state, handleClickTask, resultsPressSpace, resultFailedMessage,
+    resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter) {
     const { showCompletedTable, visualTaskData, matrixResult, matrixCheckResult, showResults } = state;
     const { row, column, matrix } = visualTaskData;
 
@@ -308,8 +313,8 @@ function displayTable(state, handleClick, pressSpaceMessage, resultFailedMessage
         <Container className="justify-content-md-center">
             {showCompletedTable ?
                 getDemoTable(row, column, matrix) :
-                getTable(row, column, matrix, matrixResult, matrixCheckResult, handleClick,
-                    showResults, pressSpaceMessage, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage)}
+                getTable(row, column, matrix, matrixResult, matrixCheckResult, handleClickTask,
+                    showResults, resultsPressSpace, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter)}
         </Container>)
 }
 
@@ -320,15 +325,15 @@ function displayTable(state, handleClick, pressSpaceMessage, resultFailedMessage
  * @param {*} matrix 
  * @param {*} matrixResult 
  * @param {*} matrixCheckResult 
- * @param {*} handleClick 
+ * @param {*} handleClickTask 
  * @param {*} showResults 
  */
-function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClick,
-    showResults, pressSpaceMessage, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage) {
+function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClickTask,
+    showResults, resultsPressSpace, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter) {
     if (showResults) {
-        return getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult, pressSpaceMessage, resultFailedMessage, resultSuccessMessage)
+        return getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult, resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter)
     } else {
-        return getTableTask(TRow, TColumn, matrixResult, handleClick, startPressSpaceMessage, textMessage)
+        return getTableTask(TRow, TColumn, matrixResult, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter)
     }
 }
 
@@ -340,7 +345,7 @@ function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handle
  * @param {*} matrixResult 
  * @param {*} matrixCheckResult 
  */
-function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult, pressSpaceMessage, resultFailedMessage, resultSuccessMessage) {
+function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult, resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter) {
     let areErrorsInTable = matrixCheckResult.filter((item) => item === TILE_ERROR).length > 0;
     let areLeftTilesInTable = matrixCheckResult.filter((item) => item === TILE_LEFT).length > 0;
 
@@ -375,7 +380,7 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
                     </Card>
                 </Row>
                 <Row className="justify-content-center">
-                    <h4 style={{ textAlign: "center" }}>{pressSpaceMessage}</h4>
+                    <Footer action={onClickFooter} text={resultsPressSpace} />
                 </Row>
             </>);
     } else { //SUCESS
@@ -394,7 +399,7 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
                     </Card>
                 </Row>
                 <Row className="justify-content-center">
-                    <h4 style={{ textAlign: "center" }}>{pressSpaceMessage}</h4>
+                    <Footer action={onClickFooter} text={resultsPressSpace} />
                 </Row>
             </>);
     }
@@ -459,15 +464,15 @@ function getResultColumns(row, TRow, TColumn, matrixToDraw) {
  * @param {*} TRow 
  * @param {*} TColumn 
  * @param {*} matrixToDraw 
- * @param {*} handleClick 
+ * @param {*} handleClickTask 
  */
-function getTableTask(TRow, TColumn, matrixToDraw, handleClick, startPressSpaceMessage, textMessage) {
+function getTableTask(TRow, TColumn, matrixToDraw, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter) {
     let children = [];
 
     for (let i = 0; i < TRow; i++) {
         children.push(
             <tr key={"key_" + TRow + "_" + TColumn + "_" + i}>
-                {getTaskColumns(i, TRow, TColumn, matrixToDraw, handleClick)}
+                {getTaskColumns(i, TRow, TColumn, matrixToDraw, handleClickTask)}
             </tr>
         );
     }
@@ -489,7 +494,7 @@ function getTableTask(TRow, TColumn, matrixToDraw, handleClick, startPressSpaceM
                 </Card>
             </Row>
             <Row className="justify-content-center">
-                <h4 style={{ textAlign: "center" }}>{startPressSpaceMessage}</h4>
+                <Footer action={onClickFooter} text={startPressSpaceMessage} />
             </Row>
         </>);
 }
@@ -500,9 +505,9 @@ function getTableTask(TRow, TColumn, matrixToDraw, handleClick, startPressSpaceM
  * @param {*} TRow 
  * @param {*} TColumn 
  * @param {*} matrixToDraw 
- * @param {*} handleClick 
+ * @param {*} handleClickTask 
  */
-function getTaskColumns(row, TRow, TColumn, matrixToDraw, handleClick) {
+function getTaskColumns(row, TRow, TColumn, matrixToDraw, handleClickTask) {
     let children = [];
 
     let rows = (matrixToDraw.length / TRow) * (row + 1);
@@ -515,7 +520,7 @@ function getTaskColumns(row, TRow, TColumn, matrixToDraw, handleClick) {
 
         children.push(
             <td className="align-middle" key={"key_td_" + TRow + "_" + TColumn + "_" + i}
-                onClick={handleClick.bind(this, currentDataIndex)}
+                onClick={handleClickTask.bind(this, currentDataIndex)}
                 style={{
                     padding: '2.5rem', fontSize: '1.2em', backgroundColor: backgroundColor
                 }} />
