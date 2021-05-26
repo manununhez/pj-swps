@@ -6,9 +6,6 @@ export const RED = "red";
 
 export const TEXT_EMPTY = "";
 
-//General config parameters
-export const YEARS_EDUCATION_LIMIT = 11;
-
 //Visual Pattern
 export const VISUAL_PATTERN = "VisualPattern"
 export const TILE_SUCCESS = 1;

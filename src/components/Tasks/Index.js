@@ -462,8 +462,8 @@ class Index extends Component {
     * Validate user form results
     */
     validateForm() {
-        const dataIsValid = true
-        return dataIsValid;
+        let data = { isValid: true }
+        return data;
     }
 
     /**
