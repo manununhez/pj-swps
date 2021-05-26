@@ -25,9 +25,7 @@ import * as constant from '../../helpers/constants';
 import { USER_INFO } from '../../helpers/utils';
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
-const ARIADNA_REDIRECT_QUOTA_FULL = process.env.REACT_APP_ARIADNA_REDIRECT_QUOTA_FULL;
 const ARIADNA_REDIRECT_FINISHED = process.env.REACT_APP_ARIADNA_REDIRECT_FINISHED
-const ARIADNA_REDIRECT_FINISHED_BONUS = process.env.REACT_APP_ARIADNA_REDIRECT_FINISHED_BONUS
 
 class Index extends Component {
     constructor(props) {
@@ -88,9 +86,7 @@ class Index extends Component {
         //session timer
         this.idleTimer = null
 
-        if (DEBUG) console.log(`ARIADNA_REDIRECT_QUOTA_FULL:${ARIADNA_REDIRECT_QUOTA_FULL}`)
         if (DEBUG) console.log(`ARIADNA_REDIRECT_FINISHED:${ARIADNA_REDIRECT_FINISHED}`)
-        if (DEBUG) console.log(`ARIADNA_REDIRECT_FINISHED_BONUS:${ARIADNA_REDIRECT_FINISHED_BONUS}`)
         if (DEBUG) console.log(`Debug:${DEBUG}`)
     }
 
@@ -466,26 +462,8 @@ class Index extends Component {
     * Validate user form results
     */
     validateForm() {
-        const { outputFormData } = this.state
-        const { yearsEduc, levelEduc } = outputFormData;
-
-        const yearsEducLimit = constant.YEARS_EDUCATION_LIMIT
-
-        if (DEBUG) console.log("validateForm")
-        if (DEBUG) console.log(outputFormData)
-        let data = {
-            isValid: false,
-            redirect: false
-        }
-
-        if (levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {
-            data.redirect = true;
-        }
-
-        if (!data.showError && !data.redirect) data.isValid = true;
-
-
-        return data;
+        const dataIsValid = true
+        return dataIsValid;
     }
 
     /**
@@ -548,16 +526,7 @@ class Index extends Component {
                     this._syncDataAfterUserValidation()
 
                     this._goToNextTaskInInputNavigation();
-                } else {
-                    if (data.redirect) {
-                        //we redirect to Ariadna
-                        alert(constant.ERROR_12);
-                        this.setState({ showAlertWindowsClosing: false }, () => {
-                            window.location.replace(ARIADNA_REDIRECT_QUOTA_FULL)
-                        })
-                    }
                 }
-
             }
         }
     }
