@@ -20,8 +20,6 @@ async function request(url, params, method = 'GET', responseType = '') {
         }
     }
 
-    console.log(options)
-
     if (params) {
         if (method === 'GET') {
             url += '?' + objectToQueryString(params);

@@ -44,7 +44,6 @@ export default class BargainResult extends React.Component {
   }
 
   _onLoadResultsCallBack = (data) => {
-    console.log(data.response)
     if (data.response === undefined) {
       this.setState({ visible: true })
       return
