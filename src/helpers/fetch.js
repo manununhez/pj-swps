@@ -9,22 +9,29 @@ const save_visualpattern_url = 'visualpattern';
 const save_userinfo_url = 'userinfo';
 const save_userlogtime_url = 'userlogtime';
 const save_usegeneraldata_url = 'usergeneraldata';
+const get_results = 'memotask-result';
 
-async function request(url, params, method = 'GET') {
-
-    const options = {
+async function request(url, params, method = 'GET', responseType = '') {
+    let options = {
         method,
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
-    };
+    }
+
+    console.log(options)
 
     if (params) {
         if (method === 'GET') {
             url += '?' + objectToQueryString(params);
         } else {
-            options.data = JSON.stringify(params);
+            if (responseType !== '') {
+                options.responseType = 'blob'
+                options.data = params
+            } else {
+                options.data = JSON.stringify(params);
+            }
         }
     }
 
@@ -56,8 +63,21 @@ export function create(url, params) {
     return request(_apiHost + url, params, 'POST');
 }
 
+export function downloadFile(url, params) {
+    return request(_apiHost + url, params, 'POST', 'blob');
+}
+
 function save(url, data, callback) {
     create(url, data)
+        .then((response) => {
+            callback({ response });
+        }, function (reason) {
+            callback(false, reason);
+        });
+}
+
+function download(url, data, callback) {
+    downloadFile(url, data)
         .then((response) => {
             callback({ response });
         }, function (reason) {
@@ -183,6 +203,10 @@ export function saveUserLogTime(data, callback) {
  */
 export function saveUserVisualPattern(data, callback) {
     save(save_visualpattern_url, uservisualpattern(data), callback)
+}
+
+export function downloadResults(data, callback) {
+    download(get_results, results(data), callback)
 }
 
 
@@ -343,4 +367,10 @@ function uservisualpattern(data) {
     });
 
     return resultDemo.concat(result);
+}
+
+function results(data) {
+    const { username, magic } = data;
+
+    return { username: username, magic: magic }
 }
