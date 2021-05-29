@@ -23,7 +23,8 @@ class UserForm extends React.Component {
         age: 0,
         yearsEduc: 0,
         levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
-        profession: constant.TEXT_EMPTY
+        profession: constant.TEXT_EMPTY,
+        numberOsoby: constant.TEXT_EMPTY
       },
       error: {
         showError: false,
@@ -54,7 +55,10 @@ class UserForm extends React.Component {
       textError: constant.TEXT_EMPTY
     }
     // CONTROL OF EMPTY_TEXT
-    if (formData.age === 0) {
+    if (formData.numberOsoby === constant.TEXT_EMPTY) {
+      error.textError = constant.ERROR_2;
+      error.showError = true;
+    } else if (formData.age === 0) {
       error.textError = constant.ERROR_5;
       error.showError = true;
     } else if (formData.profession === constant.TEXT_EMPTY) {
@@ -87,15 +91,19 @@ class UserForm extends React.Component {
     if (DEBUG) console.log(formId)
     if (DEBUG) console.log(formInputValue)
 
-    //We save all fields from form data 
-    if (formId === constant.FORM_SEX) {
+    //We save all fields from form data
+    if (formId === constant.FORM_NUMER_OSOBY) {
+      if (formInputValue < 10000) {
+        formData.numberOsoby = formInputValue
+      }
+    } else if (formId === constant.FORM_SEX) {
       if (formInputValue === constant.MALE_VALUE || formInputValue === constant.FEMALE_VALUE) {
         formData.sex = formInputValue
       } else {
         formData.sex = constant.TEXT_EMPTY
       }
     } else if (formId === constant.FORM_AGE) {
-      if (isNaN(formInputValue) || formInputValue === constant.TEXT_EMPTY || formInputValue < 0) {
+      if (isNaN(formInputValue) || formInputValue === constant.TEXT_EMPTY) {//|| formInputValue < 0) {
         formData.age = 0
       } else {
         formData.age = parseInt(formInputValue)
@@ -103,7 +111,7 @@ class UserForm extends React.Component {
     } else if (formId === constant.FORM_PROFESSION) {
       formData.profession = formInputValue
     } else if (formId === constant.FORM_YEARS_EDUC) {
-      if (isNaN(formInputValue) || formInputValue === constant.TEXT_EMPTY || formInputValue < 0) {
+      if (isNaN(formInputValue) || formInputValue === constant.TEXT_EMPTY) { //|| formInputValue < 0) {
         formData.yearsEduc = 0
       } else {
         formData.yearsEduc = parseInt(formInputValue)
@@ -149,12 +157,25 @@ class UserForm extends React.Component {
         <Form role="form" style={{ marginTop: '40px' }}>
           <FormGroup className="mb-3">
             <div className="d-flex align-items-left">
+              <h5>Numer osoby badanej</h5>
+            </div>
+            <NumberFormat className="form-control"
+              id={constant.FORM_NUMER_OSOBY}
+              placeholder={constant.TEXT_EMPTY}
+              autoFocus={true}
+              allowNegative={false}
+              value={this.state.formData.numberOsoby}
+              onValueChange={this.validateNumberFormat.bind(this, constant.FORM_NUMER_OSOBY)}
+              decimalScale={0} />
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <div className="d-flex align-items-left">
               <h5>Wiek</h5>
             </div>
             <NumberFormat className="form-control"
               id={constant.FORM_AGE}
               placeholder={constant.TEXT_EMPTY}
-              autoFocus={true}
+              allowNegative={false}
               onValueChange={this.validateNumberFormat.bind(this, constant.FORM_AGE)}
               decimalScale={0} />
           </FormGroup>
@@ -186,6 +207,7 @@ class UserForm extends React.Component {
             <NumberFormat className="form-control"
               id={constant.FORM_YEARS_EDUC}
               placeholder={constant.TEXT_EMPTY}
+              allowNegative={false}
               onValueChange={this.validateNumberFormat.bind(this, constant.FORM_YEARS_EDUC)}
               decimalScale={0} />
           </FormGroup>

@@ -59,6 +59,7 @@ class Index extends Component {
             yearsEduc: 0,
             levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
             profession: constant.TEXT_EMPTY,
+            numberOsoby: constant.TEXT_EMPTY
         }
 
         this.state = {

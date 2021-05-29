@@ -37,6 +37,7 @@ export const ONE_SECOND_MS = 1000;
 // Form IDs
 export const FORM_SEX = "radioSex";
 export const FORM_AGE = "age";
+export const FORM_NUMER_OSOBY = "numerOsoby";
 export const FORM_PROFESSION = "profession";
 export const FORM_YEARS_EDUC = "yearsEduc";
 export const FORM_LEVEL_EDUC = "levelEducationSelect";
@@ -75,6 +76,7 @@ export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTaskDemo";
 
 //General App messages KEYS
 export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"
+export const ERROR_2 = "Pole Numer osoby badanej nie może pozostać puste.";//Number osoby field cannot be empty
 export const ERROR_5 = "Pole Wiek nie może pozostać puste.";//Age field cannot be empty
 export const ERROR_6 = "Pole Lata formalnej edukacji nie może pozostać puste.";//Years Education field cannot be empty!
 export const ERROR_7 = "Pole Zawód nie może pozostać puste.";//Profession field cannot be empty!
