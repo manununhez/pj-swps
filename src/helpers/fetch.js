@@ -332,40 +332,62 @@ function userlogtime(data) {
 function uservisualpattern(data) {
     const { userID, outputVisualPattern } = data;
 
-    let resultDemo = outputVisualPattern.demo.map((output) => {
-        return [
-            userID,
-            constant.VISUAL_PATTERN_DEMO_SCREEN,
-            (output.level + 1),
-            output.dimention,
-            JSON.stringify(output.matrix),
-            JSON.stringify(output.matrixCheckResult),
-            output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length,
-            output.matrixCheckResult.filter((item) => item === constant.TILE_ERROR).length,
-            output.matrixCheckResult.filter((item) => item === constant.TILE_LEFT).length,
-            output.retry,
-            output.timestamp,
-        ];
+    const totalLevels = 5
+    const completeLevels = totalLevels - outputVisualPattern.task[outputVisualPattern.task.length - 1].level
+    const correctTilesDemo1 = outputVisualPattern.demo[0].matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length
+    const correctTilesDemo2 = outputVisualPattern.demo[1].matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length
+
+    const tilesToSelectDemo1 = outputVisualPattern.demo[0].matrix.filter((item) => item === constant.TILE_SUCCESS).length
+    const tilesToSelectDemo2 = outputVisualPattern.demo[1].matrix.filter((item) => item === constant.TILE_SUCCESS).length
+
+    const accuracyDemo1 = correctTilesDemo1 === tilesToSelectDemo1 ? 1 : 0
+    const accuracyDemo2 = correctTilesDemo2 === tilesToSelectDemo2 ? 1 : 0
+
+    let results = []
+    results.push(userID) //userID
+    ////TASKS
+    results.push(accuracyDemo1)//demo_patt1_mat(2 x 2)_CORRECT
+    results.push(accuracyDemo2)//demo_patt2_mat(2 x 3)_CORRECT
+
+    outputVisualPattern.task.forEach((output, i) => {
+        const correctTiles = output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length
+        const tilesToSelect = output.matrix.filter((item) => item === constant.TILE_SUCCESS).length
+        const accuracy = correctTiles === tilesToSelect ? 1 : 0
+
+        results.push(accuracy)
+
+        if (accuracy && output.retry === 0) { //si es retry 0 and accuracy 1, then retry 1 is empty
+            results.push(null)
+        }
     });
 
+    for (var i = 1; i < completeLevels; i++) { //complete the levels with empty
+        results.push(null)
+        results.push(null)
+    }
 
-    let result = outputVisualPattern.task.map((output) => {
-        return [
-            userID,
-            constant.VISUAL_PATTERN_SCREEN,
-            (output.level + 1),
-            output.dimention,
-            JSON.stringify(output.matrix),
-            JSON.stringify(output.matrixCheckResult),
-            output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length,
-            output.matrixCheckResult.filter((item) => item === constant.TILE_ERROR).length,
-            output.matrixCheckResult.filter((item) => item === constant.TILE_LEFT).length,
-            output.retry,
-            output.timestamp,
-        ];
+    ////TIMESTAMPS
+    results.push(outputVisualPattern.demo[0].timestamp)//demo_patt1_mat(2 x 2)_TIME
+    results.push(outputVisualPattern.demo[1].timestamp)//demo_patt2_mat(2 x 3)_TIME
+
+    outputVisualPattern.task.forEach((output, i) => {
+        const correctTiles = output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length
+        const tilesToSelect = output.matrix.filter((item) => item === constant.TILE_SUCCESS).length
+        const accuracy = correctTiles === tilesToSelect ? 1 : 0
+
+        results.push(output.timestamp)
+
+        if (accuracy && output.retry === 0) { //si es retry 0 and accuracy 1, then retry 1 is empty
+            results.push(null)
+        }
     });
 
-    return resultDemo.concat(result);
+    for (var i = 1; i < completeLevels; i++) { //complete the levels with empty
+        results.push(null)
+        results.push(null)
+    }
+
+    return [results];
 }
 
 function results(data) {
