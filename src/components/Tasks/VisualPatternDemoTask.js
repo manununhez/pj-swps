@@ -42,6 +42,7 @@ class VisualPatternDemoTask extends React.Component {
 
         this.state = {
             isLevelFinished: false,
+            mobileVersion: false,
             level: 0,
             logtime: 0,
             matrixResult: [], //contains the piles selected by the user. Initially empty
@@ -76,12 +77,22 @@ class VisualPatternDemoTask extends React.Component {
                 e.preventDefault();
             }
         });
+
+        //windows size
+        window.addEventListener("resize", this.resize.bind(this));
+        this.resize();
     }
 
     componentWillUnmount() {
+        window.removeEventListener("resize", this.resize.bind(this));
+
         document.removeEventListener(EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
 
         this._clearTimer()
+    }
+
+    resize() {
+        this.setState({ mobileVersion: window.innerWidth <= 760 });
     }
 
     _initConfig() {
@@ -307,14 +318,14 @@ class VisualPatternDemoTask extends React.Component {
  */
 function displayTable(state, handleClickTask, resultsPressSpace, resultFailedMessage,
     resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter) {
-    const { showCompletedTable, visualTaskData, matrixResult, matrixCheckResult, showResults } = state;
+    const { showCompletedTable, visualTaskData, matrixResult, matrixCheckResult, showResults, mobileVersion } = state;
     const { row, column, matrix } = visualTaskData;
 
     return (
         <Container className="justify-content-md-center">
             {showCompletedTable ?
                 getDemoTable(row, column, matrix) :
-                getTable(row, column, matrix, matrixResult, matrixCheckResult, handleClickTask,
+                getTable(mobileVersion, row, column, matrix, matrixResult, matrixCheckResult, handleClickTask,
                     showResults, resultsPressSpace, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter)}
         </Container>)
 }
@@ -329,10 +340,10 @@ function displayTable(state, handleClickTask, resultsPressSpace, resultFailedMes
  * @param {*} handleClickTask 
  * @param {*} showResults 
  */
-function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClickTask,
+function getTable(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClickTask,
     showResults, resultsPressSpace, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter) {
     if (showResults) {
-        return getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
+        return getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixCheckResult,
             resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter)
     } else {
         return getTableTask(TRow, TColumn, matrixResult, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter)
@@ -347,7 +358,7 @@ function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handle
  * @param {*} matrixResult 
  * @param {*} matrixCheckResult 
  */
-function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult, resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter) {
+function getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixCheckResult, resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter) {
     let areErrorsInTable = matrixCheckResult.filter((item) => item === TILE_ERROR).length > 0;
     let areLeftTilesInTable = matrixCheckResult.filter((item) => item === TILE_LEFT).length > 0;
 
@@ -357,30 +368,7 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
                 <Row className="justify-content-center">
                     <h4 style={{ textAlign: "center" }}>{resultFailedMessage}</h4>
                 </Row>
-                <Row className="justify-content-center">
-                    <Card body style={{ marginTop: "20px", marginBottom: "20px" }}>
-                        <Col>
-                            <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
-                                <thead>
-                                    <tr>
-                                        <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Poprawny wzór</th>
-                                        <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Twoje zaznaczenie</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style={{ textAlign: '-webkit-center' }}>
-                                        <td style={{ textAlign: "-moz-center" }}>
-                                            {getTableResultsBody(TRow, TColumn, matrix)}
-                                        </td>
-                                        <td style={{ textAlign: "-moz-center" }}>
-                                            {getTableResultsBody(TRow, TColumn, matrixResult)}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Card>
-                </Row>
+                {mobileVersion ? getTableResultsVertical(TRow, TColumn, matrix, matrixResult) : getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult)}
                 <Row className="justify-content-center">
                     <Footer action={onClickFooter} text={resultsPressSpace} />
                 </Row>
@@ -405,6 +393,76 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
                 </Row>
             </>);
     }
+}
+
+function getTableResultsVertical(TRow, TColumn, matrix, matrixResult) {
+    return (
+        <Row className="justify-content-center">
+            <Card body style={{ marginTop: "20px", marginBottom: "20px" }}>
+                <Row>
+                    <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
+                        <thead>
+                            <tr>
+                                <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Poprawny wzór</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style={{ textAlign: '-webkit-center' }}>
+                                <td style={{ textAlign: "-moz-center" }}>
+                                    {getTableResultsBody(TRow, TColumn, matrix)}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </Row>
+                <Row>
+                    <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
+                        <thead>
+                            <tr>
+                                <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Twoje zaznaczenie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style={{ textAlign: '-webkit-center' }}>
+                                <td style={{ textAlign: "-moz-center" }}>
+                                    {getTableResultsBody(TRow, TColumn, matrixResult)}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </Row>
+            </Card>
+        </Row>
+    );
+}
+
+function getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult) {
+    return (
+        <Row className="justify-content-center">
+            <Card body style={{ marginTop: "20px", marginBottom: "20px" }}>
+                <Col>
+                    <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
+                        <thead>
+                            <tr>
+                                <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Poprawny wzór</th>
+                                <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Twoje zaznaczenie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style={{ textAlign: '-webkit-center' }}>
+                                <td style={{ textAlign: "-moz-center" }}>
+                                    {getTableResultsBody(TRow, TColumn, matrix)}
+                                </td>
+                                <td style={{ textAlign: "-moz-center" }}>
+                                    {getTableResultsBody(TRow, TColumn, matrixResult)}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </Col>
+            </Card>
+        </Row>
+    );
 }
 
 /**
