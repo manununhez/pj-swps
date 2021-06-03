@@ -42,6 +42,7 @@ class VisualPatternDemoTask extends React.Component {
 
         this.state = {
             isLevelFinished: false,
+            columnResize: 0,
             mobileVersion: false,
             level: 0,
             logtime: 0,
@@ -92,7 +93,12 @@ class VisualPatternDemoTask extends React.Component {
     }
 
     resize() {
-        this.setState({ mobileVersion: window.innerWidth <= 760 });
+        this.setState({
+            mobileVersion: window.innerWidth <= 500,
+            columnResize: window.innerWidth
+        }, () => {
+            if (DEBUG) console.log(this.state)
+        });
     }
 
     _initConfig() {
@@ -318,14 +324,14 @@ class VisualPatternDemoTask extends React.Component {
  */
 function displayTable(state, handleClickTask, resultsPressSpace, resultFailedMessage,
     resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter) {
-    const { showCompletedTable, visualTaskData, matrixResult, matrixCheckResult, showResults, mobileVersion } = state;
+    const { showCompletedTable, visualTaskData, matrixResult, matrixCheckResult, showResults, mobileVersion, columnResize } = state;
     const { row, column, matrix } = visualTaskData;
 
     return (
         <Container className="justify-content-md-center">
             {showCompletedTable ?
-                getDemoTable(row, column, matrix) :
-                getTable(mobileVersion, row, column, matrix, matrixResult, matrixCheckResult, handleClickTask,
+                getDemoTable(mobileVersion, columnResize, row, column, matrix) :
+                getTable(mobileVersion, columnResize, row, column, matrix, matrixResult, matrixCheckResult, handleClickTask,
                     showResults, resultsPressSpace, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter)}
         </Container>)
 }
@@ -340,13 +346,13 @@ function displayTable(state, handleClickTask, resultsPressSpace, resultFailedMes
  * @param {*} handleClickTask 
  * @param {*} showResults 
  */
-function getTable(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClickTask,
+function getTable(mobileVersion, columnResize, TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClickTask,
     showResults, resultsPressSpace, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage, onClickFooter) {
     if (showResults) {
-        return getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixCheckResult,
+        return getTableResults(mobileVersion, columnResize, TRow, TColumn, matrix, matrixResult, matrixCheckResult,
             resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter)
     } else {
-        return getTableTask(TRow, TColumn, matrixResult, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter)
+        return getTableTask(mobileVersion, columnResize, TRow, TColumn, matrixResult, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter)
     }
 }
 
@@ -358,7 +364,7 @@ function getTable(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixChec
  * @param {*} matrixResult 
  * @param {*} matrixCheckResult 
  */
-function getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, matrixCheckResult, resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter) {
+function getTableResults(mobileVersion, columnResize, TRow, TColumn, matrix, matrixResult, matrixCheckResult, resultsPressSpace, resultFailedMessage, resultSuccessMessage, onClickFooter) {
     let areErrorsInTable = matrixCheckResult.filter((item) => item === TILE_ERROR).length > 0;
     let areLeftTilesInTable = matrixCheckResult.filter((item) => item === TILE_LEFT).length > 0;
 
@@ -368,7 +374,7 @@ function getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, mat
                 <Row className="justify-content-center">
                     <h4 style={{ textAlign: "center" }}>{resultFailedMessage}</h4>
                 </Row>
-                {mobileVersion ? getTableResultsVertical(TRow, TColumn, matrix, matrixResult) : getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult)}
+                {mobileVersion ? getTableResultsVertical(mobileVersion, columnResize, TRow, TColumn, matrix, matrixResult) : getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult)}
                 <Row className="justify-content-center">
                     <Footer action={onClickFooter} text={resultsPressSpace} />
                 </Row>
@@ -382,8 +388,8 @@ function getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, mat
                 <Row className="justify-content-center">
                     <Card style={{ marginBottom: "20px" }}>
                         <CardBody>
-                            <Table responsive bordered size="sm" style={{ width: "50%", marginBottom: "0" }}>
-                                {getTableResultsBody(TRow, TColumn, matrixCheckResult)}
+                            <Table responsive bordered style={{ width: "50%", marginBottom: "0" }}>
+                                {getTableResultsBody(mobileVersion, columnResize, TRow, TColumn, matrixCheckResult)}
                             </Table>
                         </CardBody>
                     </Card>
@@ -395,12 +401,12 @@ function getTableResults(mobileVersion, TRow, TColumn, matrix, matrixResult, mat
     }
 }
 
-function getTableResultsVertical(TRow, TColumn, matrix, matrixResult) {
+function getTableResultsVertical(mobileVersion, columnResize, TRow, TColumn, matrix, matrixResult) {
     return (
         <Row className="justify-content-center">
             <Card body style={{ marginTop: "20px", marginBottom: "20px" }}>
                 <Row>
-                    <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
+                    <Table responsive bordered style={{ width: "100%", marginBottom: "0" }}>
                         <thead>
                             <tr>
                                 <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Poprawny wzór</th>
@@ -409,14 +415,14 @@ function getTableResultsVertical(TRow, TColumn, matrix, matrixResult) {
                         <tbody>
                             <tr style={{ textAlign: '-webkit-center' }}>
                                 <td style={{ textAlign: "-moz-center" }}>
-                                    {getTableResultsBody(TRow, TColumn, matrix)}
+                                    {getTableResultsBody(mobileVersion, columnResize, TRow, TColumn, matrix)}
                                 </td>
                             </tr>
                         </tbody>
                     </Table>
                 </Row>
                 <Row>
-                    <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
+                    <Table responsive bordered style={{ width: "100%", marginBottom: "0" }}>
                         <thead>
                             <tr>
                                 <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Twoje zaznaczenie</th>
@@ -425,7 +431,7 @@ function getTableResultsVertical(TRow, TColumn, matrix, matrixResult) {
                         <tbody>
                             <tr style={{ textAlign: '-webkit-center' }}>
                                 <td style={{ textAlign: "-moz-center" }}>
-                                    {getTableResultsBody(TRow, TColumn, matrixResult)}
+                                    {getTableResultsBody(mobileVersion, columnResize, TRow, TColumn, matrixResult)}
                                 </td>
                             </tr>
                         </tbody>
@@ -436,12 +442,12 @@ function getTableResultsVertical(TRow, TColumn, matrix, matrixResult) {
     );
 }
 
-function getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult) {
+function getTableResultsHorizontal(mobileVersion, columnResize, TRow, TColumn, matrix, matrixResult) {
     return (
         <Row className="justify-content-center">
             <Card body style={{ marginTop: "20px", marginBottom: "20px" }}>
                 <Col>
-                    <Table responsive bordered size="sm" style={{ width: "100%", marginBottom: "0" }}>
+                    <Table responsive bordered style={{ width: "100%", marginBottom: "0" }}>
                         <thead>
                             <tr>
                                 <th className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>Poprawny wzór</th>
@@ -451,10 +457,10 @@ function getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult) {
                         <tbody>
                             <tr style={{ textAlign: '-webkit-center' }}>
                                 <td style={{ textAlign: "-moz-center" }}>
-                                    {getTableResultsBody(TRow, TColumn, matrix)}
+                                    {getTableResultsBody(mobileVersion, columnResize, TRow, TColumn, matrix)}
                                 </td>
                                 <td style={{ textAlign: "-moz-center" }}>
-                                    {getTableResultsBody(TRow, TColumn, matrixResult)}
+                                    {getTableResultsBody(mobileVersion, columnResize, TRow, TColumn, matrixResult)}
                                 </td>
                             </tr>
                         </tbody>
@@ -471,19 +477,19 @@ function getTableResultsHorizontal(TRow, TColumn, matrix, matrixResult) {
  * @param {*} TColumn 
  * @param {*} matrixToDraw 
  */
-function getTableResultsBody(TRow, TColumn, matrixToDraw) {
+function getTableResultsBody(mobileVersion, columnResize, TRow, TColumn, matrixToDraw) {
     let children = [];
 
     for (let i = 0; i < TRow; i++) {
         children.push(
             <tr key={"key_" + TRow + "_" + TColumn + "_" + i}>
-                {getResultColumns(i, TRow, TColumn, matrixToDraw)}
+                {getResultColumns(mobileVersion, columnResize, i, TRow, TColumn, matrixToDraw)}
             </tr>
         );
     }
 
     return (
-        <Table responsive bordered size="sm" style={{ width: "auto", marginBottom: "0" }}>
+        <Table responsive bordered style={{ width: "auto", marginBottom: "0" }}>
             <tbody>
                 {children}
             </tbody>
@@ -497,9 +503,9 @@ function getTableResultsBody(TRow, TColumn, matrixToDraw) {
  * @param {*} TColumn 
  * @param {*} matrixToDraw 
  */
-function getResultColumns(row, TRow, TColumn, matrixToDraw) {
+function getResultColumns(mobileVersion, columnResize, row, TRow, TColumn, matrixToDraw) {
     let children = [];
-
+    let columnSize = (mobileVersion) ? (columnResize / TColumn / 3) : 45
     let rows = (matrixToDraw.length / TRow) * (row + 1);
 
     for (let i = 0; i < TColumn; i++) {
@@ -511,7 +517,7 @@ function getResultColumns(row, TRow, TColumn, matrixToDraw) {
         children.push(
             <td className="align-middle" key={"key_td_" + TRow + "_" + TColumn + "_" + i}
                 style={{
-                    padding: '2.5rem', fontSize: '1.2em', backgroundColor: backgroundColor
+                    padding: columnSize + 'px', fontSize: '1.2em', backgroundColor: backgroundColor
                 }} />
         );
     }
@@ -526,13 +532,13 @@ function getResultColumns(row, TRow, TColumn, matrixToDraw) {
  * @param {*} matrixToDraw 
  * @param {*} handleClickTask 
  */
-function getTableTask(TRow, TColumn, matrixToDraw, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter) {
+function getTableTask(mobileVersion, columnResize, TRow, TColumn, matrixToDraw, handleClickTask, startPressSpaceMessage, textMessage, onClickFooter) {
     let children = [];
 
     for (let i = 0; i < TRow; i++) {
         children.push(
             <tr key={"key_" + TRow + "_" + TColumn + "_" + i}>
-                {getTaskColumns(i, TRow, TColumn, matrixToDraw, handleClickTask)}
+                {getTaskColumns(mobileVersion, columnResize, i, TRow, TColumn, matrixToDraw, handleClickTask)}
             </tr>
         );
     }
@@ -545,7 +551,7 @@ function getTableTask(TRow, TColumn, matrixToDraw, handleClickTask, startPressSp
             <Row className="justify-content-center">
                 <Card style={{ marginTop: "20px", marginBottom: "20px" }}>
                     <CardBody>
-                        <Table responsive bordered size="sm" style={{ width: "50%", marginBottom: "0" }}>
+                        <Table responsive bordered style={{ width: "50%", marginBottom: "0" }}>
                             <tbody>
                                 {children}
                             </tbody>
@@ -567,9 +573,9 @@ function getTableTask(TRow, TColumn, matrixToDraw, handleClickTask, startPressSp
  * @param {*} matrixToDraw 
  * @param {*} handleClickTask 
  */
-function getTaskColumns(row, TRow, TColumn, matrixToDraw, handleClickTask) {
+function getTaskColumns(mobileVersion, columnResize, row, TRow, TColumn, matrixToDraw, handleClickTask) {
     let children = [];
-
+    let columnSize = (mobileVersion) ? (columnResize / TColumn / 3) : 45
     let rows = (matrixToDraw.length / TRow) * (row + 1);
 
     for (let i = 0; i < TColumn; i++) {
@@ -582,7 +588,7 @@ function getTaskColumns(row, TRow, TColumn, matrixToDraw, handleClickTask) {
             <td className="align-middle" key={"key_td_" + TRow + "_" + TColumn + "_" + i}
                 onClick={handleClickTask.bind(this, currentDataIndex)}
                 style={{
-                    padding: '2.5rem', fontSize: '1.2em', backgroundColor: backgroundColor
+                    padding: columnSize + 'px', fontSize: '1.2em', backgroundColor: backgroundColor
                 }} />
         );
     }
@@ -595,13 +601,13 @@ function getTaskColumns(row, TRow, TColumn, matrixToDraw, handleClickTask) {
  * @param {*} TColumn 
  * @param {*} data 
  */
-function getDemoTable(TRow, TColumn, data) {
+function getDemoTable(mobileVersion, columnResize, TRow, TColumn, data) {
     let children = [];
 
     for (let i = 0; i < TRow; i++) {
         children.push(
             <tr key={"key_tr_" + TRow + "_" + TColumn + "_" + i}>
-                {getDemoColumns(i, TRow, TColumn, data)}
+                {getDemoColumns(mobileVersion, columnResize, i, TRow, TColumn, data)}
             </tr>
         );
     }
@@ -610,7 +616,7 @@ function getDemoTable(TRow, TColumn, data) {
         <Row className="justify-content-center">
             <Card style={{ marginTop: "100px", marginBottom: "20px" }}>
                 <CardBody>
-                    <Table responsive bordered size="sm" style={{ width: "50%", marginBottom: "0" }}>
+                    <Table responsive bordered style={{ width: "50%", marginBottom: "0" }}>
                         <tbody>
                             {children}
                         </tbody>
@@ -628,9 +634,9 @@ function getDemoTable(TRow, TColumn, data) {
  * @param {*} TColumn 
  * @param {*} data 
  */
-function getDemoColumns(row, TRow, TColumn, data) {
+function getDemoColumns(mobileVersion, columnResize, row, TRow, TColumn, data) {
     let children = [];
-
+    let columnSize = (mobileVersion) ? (columnResize / TColumn / 3) : 45
     let rows = (data.length / TRow) * (row + 1);
 
     for (let i = 0; i < TColumn; i++) {
@@ -638,7 +644,7 @@ function getDemoColumns(row, TRow, TColumn, data) {
         let backgroundColor = (data[currentDataIndex] ? 'blue' : 'white');
         children.push(
             <td className="align-middle" key={"key_td_" + TRow + "_" + TColumn + "_" + i}
-                style={{ padding: '2.5rem', fontSize: '1.2em', backgroundColor: backgroundColor }} />
+                style={{ padding: columnSize + 'px', fontSize: '1.2em', backgroundColor: backgroundColor }} />
         );
     }
     return children;
